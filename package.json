@@ -1,0 +1,11 @@
+{
+  "name": "banking-microservices",
+  "version": "0.0.2",
+  "description": "",
+  "author": "",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "dev": "docker compose up --build"
+  }
+}

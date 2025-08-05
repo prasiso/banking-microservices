@@ -1,0 +1,34 @@
+version: "3.8"
+services:
+  api-gateway:
+    build:
+      context: ./apps/api-gateway/
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    env_file:
+      - ./apps/api-gateway/.env.dev
+    ports:
+      - "3000:3000"
+    depends_on:
+      - clients
+      - transactions
+
+  clients:
+    build:
+      context: ./apps/clients/
+      dockerfile: Dockerfile
+    container_name: clients
+    env_file:
+      - ./apps/clients/.env.dev
+    ports:
+      - "3001:3001"
+
+  transactions:
+    build:
+      context: ./apps/transactions/
+      dockerfile: Dockerfile
+    container_name: transactions
+    env_file:
+      - ./apps/transactions/.env.dev
+    ports:
+      - "3002:3002"
