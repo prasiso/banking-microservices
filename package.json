@@ -8,6 +8,7 @@
   "scripts": {
     "dev": "docker compose -f docker-compose.dev.yml up  --build ",
     "prod": "docker compose up  --build --no-deps --force-recreate",
-    "prod:services": "docker compose up --build postgres-client postgres-transaction redis rabbitmq"
+    "prod:services": "docker compose up --build postgres-client postgres-transaction redis rabbitmq",
+    "prod:apps": "docker compose up --build client transaction api-gateway"
   }
 }
