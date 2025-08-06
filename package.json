@@ -6,7 +6,7 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "dev": "docker compose -f docker-compose.dev.yml up  --build",
-    "prod": "docker compose up  --build"
+    "dev": "docker compose -f docker-compose.dev.yml up  --build ",
+    "prod": "docker compose up  --build --no-deps --force-recreate"
   }
 }

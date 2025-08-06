@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model client {
+  id_client                                          Int           @id(map: "client_pk") @default(autoincrement())
+  name                                               String        @db.VarChar
+  email                                              String        @unique(map: "client_unique") @db.VarChar
+  agency                                             String?       @db.VarChar
+  account                                            String?       @db.VarChar
+  balance                                            Float        @default(0) @db.Real
+  send     transaction[] @relation("transaction_id_client_sendToclient")
+  receiver transaction[] @relation("transaction_id_client_receiverToclient")
+}
+
+model transaction {
+  id_transaction                                Int    @id(map: "transaction_pk") @default(autoincrement())
+  id_client_send                                Int
+  id_client_receiver                            Int
+  amount                                        Float  @default(0)
+  send     client @relation("transaction_id_client_sendToclient", fields: [id_client_send], references: [id_client], onDelete: SetNull, onUpdate: NoAction, map: "transaction_client_fk")
+  receiver client @relation("transaction_id_client_receiverToclient", fields: [id_client_receiver], references: [id_client], onDelete: SetNull, onUpdate: NoAction, map: "transaction_client_fk_1")
+}
