@@ -1,0 +1,129 @@
+version: '3.8'
+name: banking-microservice-prod
+
+services:
+  postgres-client:
+    image: postgres:15
+    container_name: postgres-client
+    environment:
+      POSTGRES_DB: ${POSTAGRES_CLIENT_DB}
+      POSTGRES_USER: ${POSTAGRES_CLIENT_USER}
+      POSTGRES_PASSWORD: ${POSTAGRES_CLIENT_PASSWORD}
+    ports:
+      - "${POSTAGRES_CLIENT_PORT}:5432"
+    volumes:
+      - postgres-client-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTAGRES_CLIENT_USER}"]
+      interval: 10s
+      retries: 5
+
+  postgres-transaction:
+    image: postgres:15
+    container_name: postgres-transaction
+    environment:
+      POSTGRES_DB: ${POSTAGRES_TRANSACTION_DB}
+      POSTGRES_USER: ${POSTAGRES_TRANSACTION_USER}
+      POSTGRES_PASSWORD: ${POSTAGRES_TRANSACTION_PASSWORD}
+    ports:
+      - "${POSTAGRES_TRANSACTION_PORT}:5432"
+    volumes:
+      - postgres-transaction-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTAGRES_TRANSACTION_USER}"]
+      interval: 10s
+      retries: 5
+
+  redis:
+    image: redis:7
+    container_name: redis
+    ports:
+      - "${REDIS_PORT}:6379"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      retries: 5
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD}
+    ports:
+      - "${RABBITMQ_PORT}:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 10s
+      retries: 5
+
+  api-gateway:
+    build:
+      context: ./apps/api-gateway/
+      dockerfile: Dockerfile
+    container_name: api-gateway
+    ports:
+      - "${API_GATEWAY_PORT}:3000"
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      AUTH_SERVICE_URL: http://client:3001
+      APP_SERVICE_URL: http://transaction:3002
+    depends_on:
+      - rabbitmq
+      - client
+      - transaction
+    networks:
+      - app-network
+    restart: always
+
+  client:
+    build:
+      context: ./apps/clients/
+      dockerfile: Dockerfile
+    container_name: client
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      DATABASE_URL: postgres://${POSTAGRES_CLIENT_USER}:${POSTAGRES_CLIENT_PASSWORD}@postgres-client:5432/${POSTAGRES_CLIENT_DB}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+    depends_on:
+      - postgres-client
+      - rabbitmq
+    networks:
+      - app-network
+    restart: always
+
+  transaction:
+    build:
+      context: ./apps/transactions/
+      dockerfile: Dockerfile
+    container_name: transaction
+    environment:
+      NODE_ENV: ${NODE_ENV}
+      DATABASE_URL: postgres://${POSTAGRES_TRANSACTION_USER}:${POSTAGRES_TRANSACTION_PASSWORD}@postgres-transaction:5432/${POSTAGRES_TRANSACTION_DB}
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+    depends_on:
+      - postgres-transaction
+      - rabbitmq
+    networks:
+      - app-network
+    restart: always
+
+networks:
+  app-network:
+
+volumes:
+  postgres-client-data:
+  postgres-transaction-data:
+  rabbitmq-data:
