@@ -78,8 +78,6 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV}
       RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
-      AUTH_SERVICE_URL: http://client:3001
-      APP_SERVICE_URL: http://transaction:3002
     depends_on:
       - rabbitmq
       - client
