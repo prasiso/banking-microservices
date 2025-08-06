@@ -24,7 +24,7 @@ services:
     image: postgres:15
     container_name: postgres-transaction
     environment:
-      POSTGRES_DB: ${POSTAGRES_TRANSACTION_DB}
+      POSTGRES_DB:  ${POSTAGRES_TRANSACTION_DB}
       POSTGRES_USER: ${POSTAGRES_TRANSACTION_USER}
       POSTGRES_PASSWORD: ${POSTAGRES_TRANSACTION_PASSWORD}
     ports:
@@ -95,7 +95,7 @@ services:
     container_name: client
     environment:
       NODE_ENV: ${NODE_ENV}
-      DATABASE_URL: postgres://${POSTAGRES_CLIENT_USER}:${POSTAGRES_CLIENT_PASSWORD}@postgres-client:5432/${POSTAGRES_CLIENT_DB}
+      DATABASE_URL: postgres://${POSTAGRES_CLIENT_USER}:${POSTAGRES_CLIENT_PASSWORD}@${POSTAGRES_CLIENT_HOST}/${POSTAGRES_CLIENT_DB}
       RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
     depends_on:
       - postgres-client
@@ -111,7 +111,7 @@ services:
     container_name: transaction
     environment:
       NODE_ENV: ${NODE_ENV}
-      DATABASE_URL: postgres://${POSTAGRES_TRANSACTION_USER}:${POSTAGRES_TRANSACTION_PASSWORD}@postgres-transaction:5432/${POSTAGRES_TRANSACTION_DB}
+      DATABASE_URL: postgres://${POSTAGRES_TRANSACTION_USER}:${POSTAGRES_TRANSACTION_PASSWORD}@${POSTAGRES_TRANSACTION_HOST}/${POSTAGRES_TRANSACTION_DB}
       RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
     depends_on:
       - postgres-transaction

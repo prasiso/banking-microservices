@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model banking {
+  id_banking Int     @id(map: "banking_pk") @default(autoincrement())
+  agency     String  @db.VarChar
+  account    String  @db.VarChar
+  client     client?
+}
+
+model client {
+  id_client      Int       @id(map: "client_pk") @default(autoincrement())
+  name           String    @db.VarChar
+  email          String    @unique(map: "email_unique") @db.VarChar
+  address        String?   @db.VarChar
+  profilepicture String?   @db.VarChar
+  createdat      DateTime? @default(now()) @db.Date
+  updatedat      DateTime? @default(now()) @db.Date
+  id_banking     Int       @unique(map: "client_unique")
+  banking        banking   @relation(fields: [id_banking], references: [id_banking], onDelete: NoAction, onUpdate: NoAction, map: "client_banking_fk")
+}
