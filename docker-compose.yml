@@ -91,9 +91,11 @@ services:
       context: ./apps/clients/
       dockerfile: Dockerfile
     container_name: client
+    ports:
+      - "3001:3001"
     environment:
       NODE_ENV: ${NODE_ENV}
-      DATABASE_URL: postgres://${POSTAGRES_CLIENT_USER}:${POSTAGRES_CLIENT_PASSWORD}@${POSTAGRES_CLIENT_HOST}/${POSTAGRES_CLIENT_DB}
+      DATABASE_URL: postgres://${POSTAGRES_CLIENT_USER}:${POSTAGRES_CLIENT_PASSWORD}@postgres-client/${POSTAGRES_CLIENT_DB}
       RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
     depends_on:
       - postgres-client
@@ -107,9 +109,11 @@ services:
       context: ./apps/transactions/
       dockerfile: Dockerfile
     container_name: transaction
+    ports:
+      - "3002:3002"
     environment:
       NODE_ENV: ${NODE_ENV}
-      DATABASE_URL: postgres://${POSTAGRES_TRANSACTION_USER}:${POSTAGRES_TRANSACTION_PASSWORD}@${POSTAGRES_TRANSACTION_HOST}/${POSTAGRES_TRANSACTION_DB}
+      DATABASE_URL: postgres://${POSTAGRES_TRANSACTION_USER}:${POSTAGRES_TRANSACTION_PASSWORD}@postgres-transaction/${POSTAGRES_TRANSACTION_DB}
       RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
     depends_on:
       - postgres-transaction

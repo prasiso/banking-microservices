@@ -1,6 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
@@ -12,17 +12,18 @@ model banking {
   id_banking Int     @id(map: "banking_pk") @default(autoincrement())
   agency     String  @db.VarChar
   account    String  @db.VarChar
+  id_client  Int?    @unique(map: "banking_unique")
   client     client?
 }
 
 model client {
-  id_client      Int       @id(map: "client_pk") @default(autoincrement())
-  name           String    @db.VarChar
-  email          String    @unique(map: "email_unique") @db.VarChar
-  address        String?   @db.VarChar
-  profilepicture String?   @db.VarChar
-  createdat      DateTime? @default(now()) @db.Date
-  updatedat      DateTime? @default(now()) @db.Date
-  id_banking     Int       @unique(map: "client_unique")
-  banking        banking   @relation(fields: [id_banking], references: [id_banking], onDelete: NoAction, onUpdate: NoAction, map: "client_banking_fk")
+  id_client       Int       @id(map: "client_pk") @default(autoincrement())
+  name            String    @db.VarChar
+  email           String    @unique(map: "email_unique") @db.VarChar
+  address         String?   @db.VarChar
+  profile_picture String?   @db.VarChar
+  created_at      DateTime? @default(now()) @db.Date
+  updated_at      DateTime? @default(now()) @db.Date
+  id_banking      Int       @unique(map: "client_banking_unique")
+  banking         banking   @relation(fields: [id_banking], references: [id_banking], onDelete: NoAction, onUpdate: NoAction, map: "client_banking_fk")
 }

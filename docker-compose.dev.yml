@@ -16,12 +16,16 @@ services:
   clients:
     build:
       context: ./apps/clients/
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
     container_name: clients
     env_file:
-      - ./apps/clients/.env.dev
+      - ./apps/clients/.env
     ports:
       - "3001:3001"
+    volumes:
+      - ./apps/clients:/app
+      - /app/node_modules
+    command: npm run start:dev
 
   transactions:
     build:
@@ -29,6 +33,6 @@ services:
       dockerfile: Dockerfile
     container_name: transactions
     env_file:
-      - ./apps/transactions/.env.dev
+      - ./apps/transactions/.env
     ports:
       - "3002:3002"
