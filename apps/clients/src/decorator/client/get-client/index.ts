@@ -1,6 +1,6 @@
 import { applyDecorators, Get } from '@nestjs/common';
 import { Swagger } from './swagger';
 
-export const getUser = () => {
+export const getClient = () => {
   return applyDecorators(Get(':id'), Swagger());
 };

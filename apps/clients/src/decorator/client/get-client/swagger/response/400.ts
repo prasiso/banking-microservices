@@ -1,11 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiResponse } from '@nestjs/swagger';
+import { Response400Client } from 'src/decorator/client/swagger';
 
 export const ResponseBadRequestClient = () => {
-  return applyDecorators(
-    ApiResponse({
-      status: 400,
-      description: 'Parametro id enviado não é valido',
-    }),
-  );
+  return applyDecorators(Response400Client());
 };

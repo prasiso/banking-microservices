@@ -1,30 +1,25 @@
-import { ClientService } from 'src/services';
-import { Test, TestingModule } from '@nestjs/testing';
+import { CacheService, ClientService } from 'src/services';
 import { prismaMock } from './mock';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { ParamsGetOne } from 'src/interface';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { createTestModule } from './module';
 describe('ClientService - getOne', () => {
   let service: ClientService;
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        ClientService,
-        { provide: PrismaService, useValue: prismaMock },
-      ],
-    }).compile();
-    service = module.get<ClientService>(ClientService);
+    const result = await createTestModule();
+    service = result.service;
   });
+
   afterEach(() => {
     jest.clearAllMocks();
   });
   it('parâmetro id inválido deve responder badRequest', async () => {
-    await expect(service.getOne(NaN)).rejects.toThrow(BadRequestException);
-    await expect(service.getOne(0)).rejects.toThrow(BadRequestException);
+    await expect(service.get_one(NaN)).rejects.toThrow(BadRequestException);
+    await expect(service.get_one(0)).rejects.toThrow(BadRequestException);
   });
   it('Cliente não encontrado deve responder notFound', async () => {
     prismaMock.client.findFirst.mockResolvedValue(null);
-    await expect(service.getOne(1)).rejects.toThrow(NotFoundException);
+    await expect(service.get_one(1)).rejects.toThrow(NotFoundException);
     expect(prismaMock.client.findFirst).toHaveBeenCalledWith({
       where: { id_client: 1 },
     });
@@ -32,7 +27,7 @@ describe('ClientService - getOne', () => {
   it('Cliente encontrado deve responder com dados do cliente', async () => {
     const client = { id_client: 1 };
     prismaMock.client.findFirst.mockResolvedValue(client);
-    const res = await service.getOne(1);
+    const res = await service.get_one(1);
     expect(res).toEqual(client);
     expect(prismaMock.client.findFirst).toHaveBeenCalledWith({
       where: { id_client: 1 },
@@ -46,7 +41,7 @@ describe('ClientService - getOne', () => {
         id_client: true,
       },
     };
-    const res = await service.getOne(1, opt);
+    const res = await service.get_one(1, opt);
     expect(res).toEqual(client);
     expect(prismaMock.client.findFirst).toHaveBeenCalledWith({
       where: { id_client: 1 },

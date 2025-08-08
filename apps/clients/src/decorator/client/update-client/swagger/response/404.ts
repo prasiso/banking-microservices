@@ -1,7 +1,6 @@
 import { applyDecorators } from '@nestjs/common';
-import { ApiResponse } from '@nestjs/swagger';
 import { Response404Client } from 'src/decorator/client/swagger';
 
-export const ResponseNotFoundClient = () => {
+export const Response404UpdateClient = () => {
   return applyDecorators(Response404Client());
 };
