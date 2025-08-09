@@ -1,7 +1,7 @@
 import { ClientService } from 'src/services';
 import { createTestModule } from './module';
 import { cacheMock, prismaMock, rabbitMQMock } from './mock';
-import { ConflictException } from '@nestjs/common';
+import { BadRequestException, ConflictException } from '@nestjs/common';
 
 describe('ClientService - update_client', () => {
   let service: ClientService;
@@ -47,6 +47,7 @@ describe('ClientService - update_client', () => {
       ...data,
     };
     prismaMock.client.count.mockResolvedValue(0);
+    prismaMock.banking.count.mockResolvedValue(0);
     prismaMock.client.update.mockResolvedValue(up);
     cacheMock.buildKey.mockReturnValue(key);
     const result = await service.update_client(1, data);
@@ -72,8 +73,30 @@ describe('ClientService - update_client', () => {
       up,
       60 * 1000,
     );
-    expect(rabbitMQMock.emit).toHaveBeenCalled()
+    expect(rabbitMQMock.emit).toHaveBeenCalled();
     expect(result).toEqual(up);
+  });
+  it('Cliente atualizando os dados bancários já existente', async () => {
+    const id_client = 1;
+    const banking = {
+      agency: '0023',
+      account: '234567-8',
+    };
+    const body = {
+      name: 'Maria Oliveira',
+      email: 'joao.silva@example.com',
+      address: 'Avenida Central, 455',
+    };
+    const data = {
+      ...body,
+      banking,
+    };
+
+    prismaMock.client.count.mockResolvedValue(0);
+    prismaMock.banking.count.mockResolvedValue(1);
+    await expect(service.update_client(id_client, data)).rejects.toThrow(
+      BadRequestException,
+    );
   });
 
   it('Cliente atualizando sem dados bancários', async () => {
@@ -94,7 +117,7 @@ describe('ClientService - update_client', () => {
     });
     expect(cacheMock.buildKey).toHaveBeenCalled();
     expect(cacheMock.set).toHaveBeenCalled();
-    expect(rabbitMQMock.emit).toHaveBeenCalled()
+    expect(rabbitMQMock.emit).toHaveBeenCalled();
     expect(result).toEqual({ id_client, ...data });
   });
 });

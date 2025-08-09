@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { IsEmail, IsObject, IsOptional, IsString } from 'class-validator';
+import { IsEmail, IsObject, IsOptional, IsString, ValidateNested } from 'class-validator';
 class bankingDto {
   @ApiProperty()
   @IsString()
@@ -26,6 +26,7 @@ export class updateClientDto {
   @ApiProperty({ type: bankingDto })
   @IsObject()
   @IsOptional()
+  @ValidateNested({ context: true })
   @Type(() => bankingDto)
   banking?: bankingDto;
 }

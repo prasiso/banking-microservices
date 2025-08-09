@@ -28,7 +28,7 @@ export class ClientService {
     if (!Number(id))
       throw new BadRequestException('Parametro id enviado não é valido');
 
-    const { cached, key } = await this.get_cached(id)
+    const { cached, key } = await this.get_cached(id);
     if (cached) return cached;
     const data = await this.prisma.client.findFirst({
       where: { id_client: id },
@@ -39,7 +39,21 @@ export class ClientService {
     return data;
   }
   async update_client(id: number, body: updateClientDto): Promise<Client> {
-    await this.get_one(id, { select: { id_client: true } }, false);
+    const client = await this.get_one(
+      id,
+      {
+        select: {
+          id_client: true,
+          banking: {
+            select: {
+              account: true,
+              agency: true,
+            },
+          },
+        },
+      },
+      false,
+    );
     if (body.email) {
       const email_found_another_client = await this.prisma.client.count({
         where: {
@@ -53,6 +67,23 @@ export class ClientService {
         throw new ConflictException('Este e-mail já está em uso.');
     }
     const { banking, ...rest } = body;
+    if (banking?.account || banking?.agency) {
+      const agency = banking?.agency ?? client.banking?.agency;
+      const account = banking?.account ?? client.banking?.account;
+      const valid = await this.prisma.banking.count({
+        where: {
+          agency,
+          account,
+          client: {
+            id_client: {
+              not: id,
+            },
+          },
+        },
+      });
+      if (valid >= 1)
+        throw new BadRequestException('A agência e a conta já estão em uso');
+    }
     const data: Prisma.clientUpdateInput = rest;
     if (banking) {
       data.banking = {
@@ -75,8 +106,7 @@ export class ClientService {
   }
 
   async upload_file(document: any, id: number) {
-    if (!document)
-      throw new NotFoundException('Não foi enviado arquivo')
+    if (!document) throw new NotFoundException('Não foi enviado arquivo');
     await this.get_one(+id, { select: { id_client: true } }, false);
     const bucket = String(process.env.AWS_S3_BUCKET_PROFILE);
     const key = `${Date.now()}-${document.originalname}`;
@@ -100,19 +130,18 @@ export class ClientService {
         },
       });
     });
-    const link = await this.s3.get_signed_url(this.bucket, path)
-    const resp = { link }
-    const { cached, key: keyCache } = await this.get_cached(id)
-    if (!cached)
-      return resp
-    cached.profile_picture = link
-    await this.cache.set(keyCache, cached, 60 * 1000)
-    return resp
+    const link = await this.s3.get_signed_url(this.bucket, path);
+    const resp = { link };
+    const { cached, key: keyCache } = await this.get_cached(id);
+    if (!cached) return resp;
+    cached.profile_picture = link;
+    await this.cache.set(keyCache, cached, 60 * 1000);
+    return resp;
   }
 
   async get_cached(id) {
     const key = this.cache.buildKey('user', id);
     const cached = await this.cache.get<Client>(key);
-    return { cached, key }
+    return { cached, key };
   }
 }

@@ -4,6 +4,9 @@ const clientPrismaMock = {
     count: jest.fn(),
     update: jest.fn(),
   },
+  banking: {
+    count: jest.fn(),
+  },
 };
 export const prismaMock = {
   ...clientPrismaMock,

@@ -18,7 +18,7 @@ class Response400ClientDto extends ResponseErroGlobalSwagger {
   })
   message: string;
   @ApiProperty({
-    example: 401,
+    example: 400,
     description: 'Status da response',
   })
   status: number;
