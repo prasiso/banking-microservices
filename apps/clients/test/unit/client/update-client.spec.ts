@@ -9,6 +9,9 @@ describe('ClientService - update_client', () => {
     const result = await createTestModule();
     service = result.service;
     jest.spyOn(service, 'get_one').mockResolvedValue({ id_client: 1 });
+    jest
+      .spyOn(service, 'get_cached')
+      .mockResolvedValue({ cached: { id_client: 1 }, key: 'user:1' });
   });
 
   afterEach(() => {

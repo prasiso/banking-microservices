@@ -8,6 +8,9 @@ describe('ClientService - getOne', () => {
   beforeEach(async () => {
     const result = await createTestModule();
     service = result.service;
+    jest
+      .spyOn(service, 'get_cached')
+      .mockResolvedValue({ cached: { id_client: 1 }, key: 'user:1' });
   });
 
   afterEach(() => {
@@ -19,6 +22,9 @@ describe('ClientService - getOne', () => {
   });
   it('Cliente não encontrado deve responder notFound', async () => {
     prismaMock.client.findFirst.mockResolvedValue(null);
+    jest
+      .spyOn(service, 'get_cached')
+      .mockResolvedValue({ cached: undefined, key: 'user:1' });
     await expect(service.get_one(1)).rejects.toThrow(NotFoundException);
     expect(prismaMock.client.findFirst).toHaveBeenCalledWith({
       where: { id_client: 1 },
@@ -26,6 +32,9 @@ describe('ClientService - getOne', () => {
   });
   it('Cliente encontrado deve responder com dados do cliente', async () => {
     const client = { id_client: 1 };
+    jest
+      .spyOn(service, 'get_cached')
+      .mockResolvedValue({ cached: undefined, key: 'user:1' });
     prismaMock.client.findFirst.mockResolvedValue(client);
     const res = await service.get_one(1);
     expect(res).toEqual(client);
@@ -34,6 +43,9 @@ describe('ClientService - getOne', () => {
     });
   });
   it('Procura de cliente com as opções do findFirst', async () => {
+    jest
+      .spyOn(service, 'get_cached')
+      .mockResolvedValue({ cached: undefined, key: 'user:1' });
     const client = { id_client: 1 };
     prismaMock.client.findFirst.mockResolvedValue(client);
     const opt: ParamsGetOne = {

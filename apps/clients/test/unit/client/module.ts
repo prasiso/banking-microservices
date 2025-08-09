@@ -1,6 +1,6 @@
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CacheService, ClientService } from 'src/services';
-import { cacheMock, prismaMock, rabbitMQMock } from './mock';
+import { AwsS3Service, CacheService, ClientService } from 'src/services';
+import { cacheMock, prismaMock, rabbitMQMock, s3Mock } from './mock';
 import { Test, TestingModule } from '@nestjs/testing';
 import { RabbitMQService } from 'src/queue/rabbitmq.service';
 
@@ -14,6 +14,7 @@ export async function createTestModule(): Promise<{
       { provide: PrismaService, useValue: prismaMock },
       { provide: CacheService, useValue: cacheMock },
       { provide: RabbitMQService, useValue: rabbitMQMock },
+      { provide: AwsS3Service, useValue: s3Mock },
     ],
   }).compile();
 
