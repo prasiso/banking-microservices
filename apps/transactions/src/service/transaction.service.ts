@@ -151,6 +151,9 @@ export class TransactionService {
         where: {
           id_client,
         },
+        select: {
+          id_client: true
+        }
       });
     };
     const request = [search_client(id)];

@@ -1,11 +1,14 @@
 const clientPrismaMock = {
   client: {
     findMany: jest.fn(),
+    findFirst: jest.fn(),
     update: jest.fn(),
   },
   transaction: {
     create: jest.fn(),
+    count: jest.fn(),
     findFirst: jest.fn(),
+    findMany: jest.fn(),
     update: jest.fn(),
   },
 };
