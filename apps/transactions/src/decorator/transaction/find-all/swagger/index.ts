@@ -4,8 +4,8 @@ import { ResponseSwagger } from './response';
 export const Swagger = () => {
   return applyDecorators(
     ApiOperation({
-      summary: 'Pegar toda as transferência por usuário',
-      description: 'Pegar toda as transferência por usuário',
+      summary: 'Pegar toda as transferência por cliente',
+      description: 'Pegar toda as transferência por cliente',
     }),
     ResponseSwagger(),
   );
