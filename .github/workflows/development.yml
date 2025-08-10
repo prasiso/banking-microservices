@@ -1,0 +1,29 @@
+name: Testes Unitários
+
+on:
+  pull_request:
+    branches: [develop]
+jobs:
+    test-client:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - name: Setup Node.JS
+              uses: actions/setup-node@v3
+              with:
+                node-version: '18'
+            - name: Test client
+              working-directory: ./apps/clients
+              run: npm install && npm test
+    test-transaction:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - name: Setup Node.JS
+              uses: actions/setup-node@v3
+              with:
+                node-version: '18'
+            - name: Test client
+              working-directory: ./apps/transactions
+              run: npm install && npm test
+            
