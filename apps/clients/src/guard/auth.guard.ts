@@ -10,7 +10,7 @@ export class AuthGuard implements CanActivate {
     context: ExecutionContext,
   ): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
-    const token = request.headers['Authorization'];
+    const token = request.headers['authorization'];
     if (process.env.INTERNAL_ACCESS_TOKEN === token)
       throw new UnauthorizedException('Não autorizado!');
     return true

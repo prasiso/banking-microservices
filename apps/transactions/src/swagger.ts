@@ -9,4 +9,5 @@ export const addSwagger = (app: INestApplication<any>) => {
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('documentation', app, document);
+  return document
 };
