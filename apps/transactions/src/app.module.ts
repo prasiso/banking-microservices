@@ -3,12 +3,13 @@ import { RabbitMQModule } from './queue/rabbitmq.module';
 import { ConfigModule } from '@nestjs/config';
 import { RABITMQ_QUEUES, RABITMQ_URL } from './queue/rabbitmq.config';
 import { PrismaModule } from './prisma/prisma.module';
-import { ClientModule, TransactionModule } from './modules';
+import { AuthModule, ClientModule, TransactionModule } from './modules';
 import { CacheModule } from '@nestjs/cache-manager';
 import { RedisOptions } from './config/redis';
 @Module({
   imports: [
     PrismaModule,
+    AuthModule,
     ConfigModule.forRoot({ isGlobal: true }),
     CacheModule.registerAsync(RedisOptions),
     TransactionModule,
