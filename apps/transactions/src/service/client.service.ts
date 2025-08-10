@@ -12,8 +12,8 @@ export class ClientService {
       id_client,
       email,
       name,
-      account: banking.account,
-      agency: banking.agency,
+      account: banking?.account,
+      agency: banking?.agency,
     };
     return await this.prisma.client.upsert({
       where: {

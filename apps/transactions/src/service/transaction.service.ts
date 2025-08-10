@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Payload } from '@nestjs/microservices';
 import { Status } from '@prisma/client';
 import { CreateTransactionDto } from 'src/dto';
@@ -30,11 +34,17 @@ export class TransactionService {
     if (!receiver)
       throw new NotFoundException('Não foi encontrado destinatário');
     if (!send) throw new NotFoundException('Não foi encontrado remetente');
-    await this.prisma.$transaction(async (tx: PrismaService) => {
+
+    if (receiver.id_client === send.id_client)
+      throw new BadRequestException(
+        'Remetente e destinatário devem ser diferentes.',
+      );
+    return await this.prisma.$transaction(async (tx: PrismaService) => {
       const data = await tx.transaction.create({
         data: body,
       });
       this.rabbit.emit(RABITMQ_QUEUES.TRANSACTION_UPDATE, data);
+      return data
     });
   }
 
@@ -77,7 +87,11 @@ export class TransactionService {
       });
     };
     await this.prisma.$transaction([
-      update_balance(Number(sender?.id_client), Number(sender?.balance), this.prisma),
+      update_balance(
+        Number(sender?.id_client),
+        Number(sender?.balance),
+        this.prisma,
+      ),
       update_balance(
         Number(receiver?.id_client),
         Number(receiver?.balance),

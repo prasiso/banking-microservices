@@ -7,19 +7,19 @@ import {
   Min,
 } from 'class-validator';
 export class CreateTransactionDto {
-  @ApiProperty()
-  @IsNumber()
-  @IsNotEmpty({ message: 'Campo remetente vazio' })
+  @ApiProperty({ example: 1 })
+  @IsNumber({}, { message: 'Campo id_client_send não aceita String' })
+  @IsNotEmpty({ message: 'Campo remetente está vazio' })
   id_client_send: number;
 
-  @ApiProperty()
-  @IsNumber()
-  @IsNotEmpty({ message: 'Campo destinatário vazio' })
+  @ApiProperty({ example: 2 })
+  @IsNumber({}, { message: 'Campo id_client_receiver não aceita String' })
+  @IsNotEmpty({ message: 'Campo destinatário está vazio' })
   id_client_receiver: number;
 
-  @ApiProperty()
-  @IsNumber()
-  @IsNotEmpty({ message: 'Valor vazio' })
+  @ApiProperty({ example: 5 })
+  @IsNumber({}, { message: 'Campo amount não aceita String' })
+  @IsNotEmpty({ message: 'Campo Valor está vazio' })
   @Min(5, { message: 'Valor deve ser acima de 5 reais' })
   amount: number;
 

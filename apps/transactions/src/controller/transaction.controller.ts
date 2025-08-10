@@ -4,7 +4,7 @@ import { CreateTransaction } from 'src/decorator/transaction';
 import { CreateTransactionDto } from 'src/dto/create-transaction.dto';
 import { TransactionService } from 'src/service/transaction.service';
 @Controller('transaction')
-@ApiTags('transaction')
+@ApiTags('Transações')
 export class TransactionController {
   constructor(private readonly transaction: TransactionService) {}
   @CreateTransaction()
