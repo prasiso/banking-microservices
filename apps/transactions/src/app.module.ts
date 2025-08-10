@@ -4,10 +4,13 @@ import { ConfigModule } from '@nestjs/config';
 import { RABITMQ_QUEUES, RABITMQ_URL } from './queue/rabbitmq.config';
 import { PrismaModule } from './prisma/prisma.module';
 import { ClientModule, TransactionModule } from './modules';
+import { CacheModule } from '@nestjs/cache-manager';
+import { RedisOptions } from './config/redis';
 @Module({
   imports: [
     PrismaModule,
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }),
+    CacheModule.registerAsync(RedisOptions),
     TransactionModule,
     ClientModule,
     RabbitMQModule.register({

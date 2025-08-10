@@ -1,2 +1,3 @@
-export * from './transaction.service'
-export * from './client.service'
+export * from './transaction.service';
+export * from './cache.service';
+export * from './client.service';

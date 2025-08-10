@@ -6,16 +6,18 @@ import {
 import { Payload } from '@nestjs/microservices';
 import { Status } from '@prisma/client';
 import { CreateTransactionDto } from 'src/dto';
-import { Transaction } from 'src/interface';
+import { ParamsGetOne, Transaction } from 'src/interface';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RABITMQ_QUEUES } from 'src/queue/rabbitmq.config';
 import { RabbitMQService } from 'src/queue/rabbitmq.service';
+import { CacheService } from './cache.service';
 
 @Injectable()
 export class TransactionService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly rabbit: RabbitMQService,
+    private readonly cache: CacheService,
   ) {}
   async create(body: CreateTransactionDto) {
     const clients = await this.prisma.client.findMany({
@@ -44,8 +46,33 @@ export class TransactionService {
         data: body,
       });
       this.rabbit.emit(RABITMQ_QUEUES.TRANSACTION_UPDATE, data);
-      return data
+      return data;
     });
+  }
+
+  async get_one(
+    id: number,
+    opt?: ParamsGetOne,
+    cache = true,
+  ): Promise<Transaction> {
+    if (!Number(id))
+      throw new BadRequestException('Parametro id enviado não é valido');
+
+    const { cached, key } = await this.get_cached(id);
+    if (cached) return cached;
+    const data = await this.prisma.transaction.findFirst({
+      where: { id_transaction: id },
+      ...opt,
+    });
+    if (!data) throw new NotFoundException('Transferência não encontrado');
+    if (cache) await this.cache.set(key, data, 60 * 1000);
+    return data;
+  }
+
+  async get_cached(id) {
+    const key = this.cache.buildKey('trans', id);
+    const cached = await this.cache.get<Transaction>(key);
+    return { cached, key };
   }
 
   async process(@Payload() data: Transaction) {
