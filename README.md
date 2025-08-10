@@ -24,11 +24,17 @@ Utilizei para somente um teste unitário para teste por não saber se viola as l
 gerei um prompt
 Quero que você atue como um gerador de testes unitários.
 Vou enviar um código-fonte (função, classe, serviço, controller, etc.), e você deve gerar testes unitários completos para ele, seguindo as regras abaixo:
-Use Jest como framework de testes.
-Os testes devem ser autoexplicativos e bem organizados.
-Inclua casos de sucesso, falha e exceções.
-Use mocks para dependências externas.
-Garanta que o teste seja isolado.
+
+1.Use Jest como framework de testes.
+
+2.Os testes devem ser autoexplicativos e bem organizados.
+
+3.Inclua casos de sucesso, falha e exceções.
+
+4.Use mocks para dependências externas.
+
+5.Garanta que o teste seja isolado.
+
 Retorne apenas o código do teste.
 
 
@@ -38,13 +44,21 @@ Transforme o seguinte JSON em um DTO TypeScript para ser usado como resposta no 
 
 Regras:
 1.Use class com export.
+
 2.Adicione os decorators @ApiProperty do @nestjs/swagger para cada campo, com description, example e type (quando necessário).
+
 3.Se o campo for opcional, use @ApiPropertyOptional.
+
 4.Campos que são arrays devem ter isArray: true no @ApiProperty.
+
 5.Datas devem ter type: String e format: 'date-time'.
+
 6.Para objetos aninhados, crie classes internas e use @Type do class-transformer para mapear.
+
 7.Mantenha os nomes das propriedades exatamente como no JSON.
+
 8.Converta todos os null do exemplo para valores representativos no example.
+
 JSON:
 {
   "id_transaction": 16,

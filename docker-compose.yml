@@ -96,7 +96,10 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV}
       DATABASE_URL: postgres://${POSTAGRES_CLIENT_USER}:${POSTAGRES_CLIENT_PASSWORD}@postgres-client/${POSTAGRES_CLIENT_DB}
-      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:${RABBITMQ_PORT}
+      PORT: "3001"
+      REDIS_HOST: redis
+      REDIS_PORT: ${REDIS_PORT}
     depends_on:
       - postgres-client
       - rabbitmq
@@ -114,7 +117,10 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV}
       DATABASE_URL: postgres://${POSTAGRES_TRANSACTION_USER}:${POSTAGRES_TRANSACTION_PASSWORD}@postgres-transaction/${POSTAGRES_TRANSACTION_DB}
-      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:${RABBITMQ_PORT}
+      PORT: "3002"
+      REDIS_HOST: redis
+      REDIS_PORT: ${REDIS_PORT}
     depends_on:
       - postgres-transaction
       - rabbitmq
