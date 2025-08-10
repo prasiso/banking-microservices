@@ -2,7 +2,7 @@ name: Testes Unitários
 
 on:
   pull_request:
-    branches: [develop]
+    branches: [develop, main]
 jobs:
     test-client:
         runs-on: ubuntu-latest
