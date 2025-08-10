@@ -1,6 +1,6 @@
 {
   "name": "banking-microservices",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "",
   "author": "",
   "private": true,
@@ -9,6 +9,9 @@
     "dev": "docker compose -f docker-compose.dev.yml up  --build ",
     "prod": "docker compose up  --build --no-deps --force-recreate",
     "prod:services": "docker compose up --build postgres-client postgres-transaction redis rabbitmq",
-    "prod:apps": "docker compose up --build client transaction api-gateway"
+    "prod:apps": "docker compose up --build client transaction api-gateway",
+    "test:client": "cd apps/clients && npm test",
+    "test:transaction": "cd apps/transactions && npm test",
+    "test:all":"npm run test:client && npm run test:transaction"
   }
 }
