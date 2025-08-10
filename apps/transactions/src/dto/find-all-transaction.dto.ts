@@ -12,7 +12,7 @@ export class FindAllTransactionDto {
   page: number;
 
   @ApiProperty()
-  @IsNotEmpty({ message: 'query limit not sent' })
+  @IsNotEmpty({ message: 'Limite não enviado' })
   @ToNumber()
   limit: number;
   @ApiProperty({ required: false })

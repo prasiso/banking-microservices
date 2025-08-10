@@ -8,16 +8,16 @@ export const Response404CreateTransaction = () => {
     content: {
       'application/json': {
         examples: {
-          receiverNotFound: {
-            summary: 'Destinatário não encontrado',
+          ClientNotFound: {
+            summary: 'Cliente não encontrado',
             value: {
-              message: 'Não foi encontrado destinatário',
+              message: 'Cliente não encontrado',
             },
           },
-          sendNotFound: {
-            summary: 'Remetente não encontrado',
+          AnotherClientNotFound: {
+            summary: 'Outro cliente não encontrado',
             value: {
-              message: 'Não foi encontrado remetente',
+              message: 'Outro cliente não encontrado',
             },
           },
         },

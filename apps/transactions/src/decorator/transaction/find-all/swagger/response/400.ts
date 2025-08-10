@@ -4,40 +4,54 @@ import { ApiResponse } from '@nestjs/swagger';
 export const Response400CreateTransaction = () => {
   const response: any = {
     status: 400,
-    description: 'Não encontrado',
+    description: 'Informações erradas',
     content: {
       'application/json': {
         examples: {
-          receiverNotFound: {
-            summary: 'Remetente e destinatário devem ser diferentes',
+          PageNotSend: {
+            summary: 'Page não enviado',
             value: {
-              message: 'Remetente e destinatário devem ser diferentes.',
+              message: ['Page não enviado'],
             },
           },
-          ValueMin: {
-            summary: 'Valor mínimo',
+          LimitNotSend: {
+            summary: 'Limite não enviado',
             value: {
-              message: ['Valor deve ser acima de 5 reais']
-            }
-          },
-          notFoundSender: {
-            summary: 'Não foi encontrado remetente',
-            value: {
-              message: ['Campo remetente está vazio']
-            }
-          },
-          notFoundRecipient: {
-            summary: 'Não foi encontrado destinatário',
-            value: {
-              message: ['Campo destinatário está vazio']
-            }
-          },
-          IsNumber: {
-            summary: 'Campo deve ser número',
-            value: {
-              message: ['Campo ${campo} não aceita String'],
+              message: ['Limite não enviado'],
             },
-          }
+          },
+          NotSendEqualType: {
+            summary: 'Os tipos não são compatível',
+            value: {
+              message: ['Os tipos devem ser SEND ou RECEIVER'],
+            },
+          },
+          NotSendEqualStatus: {
+            summary: 'Status não compatível',
+            value: {
+              message: ['Status deve ser PENDING ou NO_BALANCE ou COMPLETED'],
+            },
+          },
+          NotSendEqualOperational: {
+            summary: 'Operacional não compatíveis',
+            value: {
+              message: ['Os tipos devem ser OR ou AND'],
+            },
+          },
+          sendInvalidId: {
+            summary: 'Id é inválido',
+            value: {
+              message: ['Parametro id enviado não é valido'],
+            },
+          },
+          sameId: {
+            summary: 'Id enviado iguais',
+            value: {
+              message: [
+                'O ID de pesquisa de outro cliente não pode ser igual ao ID do próprio cliente.',
+              ],
+            },
+          },
         },
       },
     },
