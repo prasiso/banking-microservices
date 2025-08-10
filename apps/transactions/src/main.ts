@@ -17,9 +17,15 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  addSwagger(app);
+  const document = addSwagger(app);
   await app.startAllMicroservices();
   app.useGlobalFilters(new CustomExceptionFilter());
+  app
+    .getHttpAdapter()
+    .getInstance()
+    .get('/docs-json', (req, res) => {
+      res.json(document);
+    });
   await app.listen(process.env.PORT ?? 3002);
 }
 bootstrap();

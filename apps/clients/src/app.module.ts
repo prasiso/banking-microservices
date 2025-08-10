@@ -5,6 +5,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { RedisOptions } from './config/redis';
 import { ConfigModule } from '@nestjs/config';
 import { RabbitMQModule } from './queue/rabbitmq.module';
+import { AuthModule } from './modules/auth.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -12,6 +13,7 @@ import { RabbitMQModule } from './queue/rabbitmq.module';
     PrismaModule,
     ClientModule,
     AwsModule,
+    AuthModule,
     RabbitMQModule
   ],
 })
