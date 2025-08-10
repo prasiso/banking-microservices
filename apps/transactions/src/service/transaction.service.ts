@@ -4,13 +4,18 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { Payload } from '@nestjs/microservices';
-import { Status } from '@prisma/client';
-import { CreateTransactionDto } from 'src/dto';
-import { ParamsGetOne, Transaction } from 'src/interface';
+import { Prisma, Status } from '@prisma/client';
+import { CreateTransactionDto, FindAllTransactionDto } from 'src/dto';
+import { FindAllTransaction, ParamsGetOne, Transaction } from 'src/interface';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { RABITMQ_QUEUES } from 'src/queue/rabbitmq.config';
 import { RabbitMQService } from 'src/queue/rabbitmq.service';
 import { CacheService } from './cache.service';
+import {
+  pagination_helper,
+  pagination_prisma,
+  transaction_filter,
+} from 'src/common/helper';
 
 @Injectable()
 export class TransactionService {
@@ -75,7 +80,7 @@ export class TransactionService {
     return { cached, key };
   }
 
-  async process(@Payload() data: Transaction) {
+  async process(data: Transaction) {
     const clients = await this.prisma.client.findMany({
       where: {
         id_client: {
@@ -133,5 +138,78 @@ export class TransactionService {
         },
       }),
     ]);
+  }
+
+  async find_all(id: number, query: FindAllTransactionDto) {
+    if (!id) throw new BadRequestException('Parametro id enviado não é valido');
+    if (query.id_another_client && id === query.id_another_client)
+      throw new BadRequestException(
+        'O ID de pesquisa de outro cliente não pode ser igual ao ID do próprio cliente.',
+      );
+    const search_client = (id_client: number) => {
+      return this.prisma.client.findFirst({
+        where: {
+          id_client,
+        },
+      });
+    };
+    const request = [search_client(id)];
+    if (query.id_another_client) {
+      request.push(search_client(query.id_another_client));
+    }
+    const [client, another_client] = await Promise.all(request);
+    if (!client) {
+      throw new NotFoundException('Cliente não encontrado');
+    }
+    if (!another_client && query.id_another_client) {
+      throw new NotFoundException('Outro cliente não encontrado');
+    }
+
+    const where_array = transaction_filter(query);
+    const client_where = (id, send = true, receiver = true) => {
+      const resp: any = {
+        OR: [],
+      };
+      if (send) resp.OR.push({ id_client_send: id });
+      if (receiver) resp.OR.push({ id_client_receiver: id });
+      return resp;
+    };
+
+    if (another_client) {
+      where_array.push(client_where(query.id_another_client));
+    }
+    const clientWhere: Prisma.transactionWhereInput = client_where(
+      id,
+      !query.type || query.type === 'SEND',
+      !query.type || query.type === 'RECEIVER',
+    );
+
+    const where: Prisma.transactionWhereInput = {
+      AND: [clientWhere],
+    };
+    if (where_array.length && Array.isArray(where.AND)) {
+      where.AND.push({ [query.operational || 'OR']: where_array });
+    }
+    const page = +query.page;
+    const limit = +query.limit;
+    const orderBy: Prisma.transactionOrderByWithRelationInput =
+      query?.order ?? {
+        updated_at: 'desc',
+      };
+    const [data, count] = await Promise.all([
+      this.prisma.transaction.findMany({
+        where,
+        orderBy,
+        ...pagination_prisma(limit, page),
+      }),
+      this.prisma.transaction.count({
+        where,
+        orderBy,
+      }),
+    ]);
+    data.forEach((dt: FindAllTransaction) => {
+      dt.type = id === dt.id_client_receiver ? 'RECEIVER' : 'SEND';
+    });
+    return pagination_helper(page, limit, count, data);
   }
 }

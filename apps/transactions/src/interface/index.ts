@@ -1,4 +1,5 @@
 export * from './client'
 export * from './transaction'
 export * from './get-one'
+export * from './find-all'
 export * from './client-update'
