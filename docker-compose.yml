@@ -78,10 +78,13 @@ services:
     environment:
       NODE_ENV: ${NODE_ENV}
       RABBITMQ_URL: amqp://${RABBITMQ_USER}:${RABBITMQ_PASSWORD}@rabbitmq:5672
+      INTERNAL_ACCESS_TOKEN: ${INTERNAL_ACCESS_TOKEN}
+
     depends_on:
       - rabbitmq
       - client
       - transaction
+      
     networks:
       - app-network
     restart: always
@@ -100,6 +103,8 @@ services:
       PORT: "3001"
       REDIS_HOST: redis
       REDIS_PORT: ${REDIS_PORT}
+      INTERNAL_ACCESS_TOKEN: ${INTERNAL_ACCESS_TOKEN}
+
     depends_on:
       - postgres-client
       - rabbitmq
@@ -121,6 +126,7 @@ services:
       PORT: "3002"
       REDIS_HOST: redis
       REDIS_PORT: ${REDIS_PORT}
+      INTERNAL_ACCESS_TOKEN: ${INTERNAL_ACCESS_TOKEN}
     depends_on:
       - postgres-transaction
       - rabbitmq
