@@ -23,7 +23,7 @@ jobs:
               uses: actions/setup-node@v3
               with:
                 node-version: '18'
-            - name: Test client
+            - name: Test Transaction
               working-directory: ./apps/transactions
               run: npm install && npm test
             
