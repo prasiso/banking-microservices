@@ -33,7 +33,6 @@ async function main() {
       account: '456789-0',
     },
   ];
-  // FOI ESCOLHIDO FAZER DESSA FORMA DEVIDO AO CREATE MANY NAO ACEITAR CRIAR ANINHADO JUNTO AO BANKING
   await Promise.all(
     clients.map((client) => {
       return prisma.client.create({

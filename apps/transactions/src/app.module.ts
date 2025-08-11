@@ -8,9 +8,9 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { RedisOptions } from './config/redis';
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     PrismaModule,
     AuthModule,
-    ConfigModule.forRoot({ isGlobal: true }),
     CacheModule.registerAsync(RedisOptions),
     TransactionModule,
     ClientModule,
