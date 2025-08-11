@@ -17,9 +17,13 @@ git clone https://github.com/prasiso/banking-microservices.git
 ```
 npm run prod
 ```
-
- Caso seja a primeira vez rodando o projeto acesse o terminal do docker e rode o script 
+ Caso seja a primeira vez rodando o projeto terá que acessar o    terminal de cada serviço no docker e rodar o script
  ```
+ npm run init
+ ```
+
+ Caso voce tenha a envs de todo os microserviços pode rodar na pasta principal
+  ```
  npm run init:all
  ```
 
