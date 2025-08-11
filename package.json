@@ -12,6 +12,9 @@
     "prod:apps": "docker compose up --build client transaction api-gateway",
     "test:client": "cd apps/clients && npm test",
     "test:transaction": "cd apps/transactions && npm test",
-    "test:all":"npm run test:client && npm run test:transaction"
+    "test:all":"npm run test:client && npm run test:transaction",
+    "init:client":"cd apps/clients && npx prisma generate && npx prisma db push &&  npx prisma db seed",
+    "init:transaction":"cd apps/transactions &&  npx prisma generate && npx prisma db push && npx prisma db seed",
+    "init:all":"npm run init:transaction && npm run init:client"
   }
 }

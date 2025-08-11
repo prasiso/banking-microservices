@@ -15,8 +15,13 @@ git clone https://github.com/prasiso/banking-microservices.git
 
 2.Suba os serviços com docker
 ```
-npm run dev
+npm run prod
 ```
+
+ Caso seja a primeira vez rodando o projeto acesse o terminal do docker e rode o script 
+ ```
+ npm run init:all
+ ```
 
 
 ## Sobre o Uso da IA - TESTE
